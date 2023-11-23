@@ -37,7 +37,7 @@ Before using the script, make sure you have:
    The script will run in an infinite loop, checking for new emails every 60 seconds. Adjust the sleep duration in the script according to your preference.
 
 ## Database Schema
-
+```bash
 CREATE TABLE emails (
 id INT AUTO_INCREMENT PRIMARY KEY,
 from_address VARCHAR(255),
@@ -49,5 +49,7 @@ bank_name VARCHAR(255),
 reference_number VARCHAR(255),
 content LONGTEXT
 );
+
+ ```
 
 Remember to replace placeholder details like `your-username`, `your@gmail.com`, `yourAppPassword`, and adjust any other information to match your specific setup. Additionally, include any other relevant information or instructions that users might find helpful.
