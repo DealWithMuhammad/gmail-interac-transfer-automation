@@ -38,6 +38,7 @@ Before using the script, make sure you have:
 
 ## Database Schema
 
+   ```bash
 CREATE TABLE emails (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sender_name VARCHAR(255),
@@ -50,5 +51,5 @@ CREATE TABLE emails (
     subject VARCHAR(255),
     date DATETIME,
 );
-
+   ```
 Remember to replace placeholder details like `your-username`, `your@gmail.com`, `yourAppPassword`, and adjust any other information to match your specific setup. Additionally, include any other relevant information or instructions that users might find helpful.
