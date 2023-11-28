@@ -7,9 +7,21 @@ import time
 
 # Function to extract Interac e-Transfer details from email body
 def extract_interac_details(body):
+    sender_name = None
+    receiver_name = None
     interac_amount = None
     bank_name = None
     reference_number = None
+
+    # Extract sender's name
+    sender_match = re.search(r'([^,]+) has sent you', body)
+    if sender_match:
+        sender_name = sender_match.group(1).strip()
+
+    # Extract receiver's name
+    receiver_match = re.search(r'Hi ([^,]+),', body)
+    if receiver_match:
+        receiver_name = receiver_match.group(1).strip()
 
     # Split the email body into lines and iterate through them
     for line in body.split('\n'):
@@ -25,8 +37,7 @@ def extract_interac_details(body):
     if match_bank:
         bank_name = match_bank.group(1)
 
-    return interac_amount, bank_name, reference_number
-
+    return sender_name, receiver_name, interac_amount, bank_name, reference_number
 
 # Gmail credentials and login details
 username = "your@gmail.com"
@@ -70,6 +81,8 @@ while True:
                 to_address = msg["to"]
 
                 # Initialize variables for Interac e-Transfer details
+                sender_name = None
+                receiver_name = None
                 interac_amount = None
                 bank_name = None
                 reference_number = None
@@ -81,7 +94,9 @@ while True:
 
                         # Check if the email contains Interac details
                         if "INTERAC" in body:
-                            interac_amount, bank_name, reference_number = extract_interac_details(body)
+                            sender_name, receiver_name, interac_amount, bank_name, reference_number = extract_interac_details(body)
+                            print("Sender Name:", sender_name)
+                            print("Receiver Name:", receiver_name)
                             print("Interac Amount:", interac_amount)
                             print("Bank Name:", bank_name)
                             print("Reference Number:", reference_number)
@@ -96,11 +111,10 @@ while True:
                     date = None
 
                 # Insert data into MariaDB
-                sql = "INSERT INTO emails (from_address, to_address, subject, date, interac_amount, bank_name, reference_number) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                values = (from_address, to_address, subject, date, interac_amount, bank_name, reference_number)
+                sql = "INSERT INTO emails (from_address, to_address, sender_name, receiver_name, subject, date, interac_amount, bank_name, reference_number) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                values = (from_address, to_address, sender_name, receiver_name, subject, date, interac_amount, bank_name, reference_number)
                 cursor.execute(sql, values)
                 db.commit()
-
 
                 print("Email data inserted successfully.")
 
@@ -111,21 +125,20 @@ while True:
     db.close()
     mail.logout()
 
-    time.sleep(60)  # Wait for 60 seconds before checking for new emails again, You may also change time according to your preferecne  
-
-
+    time.sleep(60)  # Wait for 60 seconds before checking for new emails again
 
 # MySql Query to create table
 
 
 # CREATE TABLE emails (
 #     id INT AUTO_INCREMENT PRIMARY KEY,
+#     sender_name VARCHAR(255),
+#     receiver_name VARCHAR (255),  
 #     from_address VARCHAR(255),
 #     to_address VARCHAR(255),
-#     subject VARCHAR(255),
-#     date DATETIME,
 #     interac_amount VARCHAR(20),
 #     bank_name VARCHAR(255),
 #     reference_number VARCHAR(255),
-#     content LONGTEXT
+#     subject VARCHAR(255),
+#     date DATETIME,
 # );
