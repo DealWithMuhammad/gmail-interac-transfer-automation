@@ -129,7 +129,6 @@ while True:
 
 # MySql Query to create table
 
-
 # CREATE TABLE emails (
 #     id INT AUTO_INCREMENT PRIMARY KEY,
 #     sender_name VARCHAR(255),
